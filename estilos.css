@@ -1342,3 +1342,35 @@ fieldset legend {
     border-color: #999999;
   }
 }
+
+/* ===== Entrega 3: sesión de usuario ===== */
+
+/* Clase que usa app.js para mostrar/ocultar según haya sesión o no */
+.oculto {
+  display: none !important;
+}
+
+/* El "Salir" del header es un <button>, le sacamos el estilo por defecto */
+.btn-salir {
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-salir:hover {
+  border-color: #ff8f8f;
+  color: #ff8f8f;
+}
+
+#cuenta-panel h2 {
+  margin: 32px 0 14px;
+}
+
+#cuenta-email {
+  margin: 4px 0 0;
+}
+
+#aviso-login a {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}

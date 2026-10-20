@@ -26,7 +26,10 @@
           <input type="text" placeholder="Buscar auriculares, teclados, cargadores...">
         </div>
         <div class="header-actions">
-          <a href="login.html" class="header-action">👤 Iniciar sesión</a>
+          <!-- Se alternan desde app.js según la sesión (api/mis_compras.php) -->
+          <a href="login.html" class="header-action" id="header-login">👤 Iniciar sesión</a>
+          <a href="mi_cuenta.html" class="header-action oculto" id="header-usuario">👤 <span id="header-nombre"></span></a>
+          <button type="button" class="header-action btn-salir oculto" id="btn-logout">Salir</button>
           <a href="comprar.html" class="header-action cart">🛒 Carrito</a>
         </div>
       </div>
@@ -61,7 +64,7 @@
           Ingresá tus datos para continuar.
         </p>
 
-        <!-- Login: valida contra data/usuarios.json vía fetch (app.js), sin campo de confirmacion -->
+        <!-- Login: POST a api/login.php (password_verify + session_start en PHP) -->
         <form id="loginForm">
           <div class="form-field full">
             <label for="login_email">Email</label>
@@ -85,6 +88,19 @@
       </div>
     </section>
 
+    <!-- Se muestra en lugar de los formularios cuando ya hay una sesión abierta -->
+    <section aria-label="Sesión activa" id="sesion-activa" class="oculto">
+      <div class="form-shell login-shell">
+        <span class="eyebrow">Sesión activa</span>
+        <h1>Hola, <span id="sesion-nombre"></span></h1>
+        <p>Ya iniciaste sesión en Nova Tech. Podés seguir comprando o revisar tus pedidos.</p>
+        <a href="mi_cuenta.html" class="btn btn-primary btn-block">Ver mis compras</a>
+        <p class="login-footer-note">
+          <a href="comprar.html">Ir a comprar</a>
+        </p>
+      </div>
+    </section>
+
     <section aria-label="Formulario de registro" class="registro-view">
       <div class="form-shell login-shell">
         <span class="eyebrow">Cuenta nueva</span>
@@ -93,8 +109,13 @@
           Registrate en Nova Tech con tu email y una contraseña para poder comprar.
         </p>
 
-        <!-- Registro: aca si se pide confirmar contraseña (coincidencia + longitud minima) -->
+        <!-- Registro: POST a api/registro.php (hash BCRYPT). Se sigue validando confirmacion y longitud en el front -->
         <form id="registroForm">
+          <div class="form-field full">
+            <label for="registro_nombre">Nombre y apellido</label>
+            <input type="text" id="registro_nombre" name="registro_nombre" placeholder="Juana Pérez" maxlength="100" required>
+          </div>
+
           <div class="form-field full">
             <label for="registro_email">Email</label>
             <input type="email" id="registro_email" name="registro_email" placeholder="nombre@correo.com" required>
@@ -128,7 +149,7 @@
     <span class="accent">NOVA TECH</span> · Accesorios tecnológicos para tu día a día
   </footer>
 
-  <!-- JS del sitio (Entrega 2): login/registro desacoplados con fetch() y buscador del header (ver app.js) -->
+  <!-- JS del sitio (Entrega 3): login/registro contra la API PHP con sesiones y buscador del header (ver app.js) -->
   <script src="app.js" defer></script>
 
 </body>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Tech — Mi cuenta</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <!-- Encabezado: barra de utilidad, marca, buscador y navegacion (igual en las 6 paginas) -->
+  <header class="site-header">
+    <div class="utility-bar">
+      <div class="utility-bar-inner">
+        <span>Envíos a todo el país</span>
+      </div>
+    </div>
+    <div class="header-main">
+      <div class="header-main-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-mark">N</span>
+          NOVA <span class="accent">TECH</span>
+        </a>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Buscar auriculares, teclados, cargadores...">
+        </div>
+        <div class="header-actions">
+          <!-- Se alternan desde app.js según la sesión (api/mis_compras.php) -->
+          <a href="login.html" class="header-action" id="header-login">👤 Iniciar sesión</a>
+          <a href="mi_cuenta.html" class="header-action oculto" id="header-usuario">👤 <span id="header-nombre"></span></a>
+          <button type="button" class="header-action btn-salir oculto" id="btn-logout">Salir</button>
+          <a href="comprar.html" class="header-action cart">🛒 Carrito</a>
+        </div>
+      </div>
+    </div>
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <a href="index.html">Inicio</a>
+        <div class="nav-item">
+          <a href="listado_box.html">Catálogo ▾</a>
+          <div class="dropdown-menu">
+            <a href="listado_box.html">Vista en tarjetas</a>
+            <a href="listado_tabla.html">Vista en tabla</a>
+          </div>
+        </div>
+        <a href="producto.html">Producto destacado</a>
+        <a href="comprar.html">Comprar</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+
+    <!-- Si api/mis_compras.php responde 401 se muestra este bloque -->
+    <section aria-label="Acceso restringido" id="cuenta-sin-sesion" class="oculto">
+      <div class="form-shell login-shell">
+        <span class="eyebrow">Acceso restringido</span>
+        <h1>Necesitás iniciar sesión</h1>
+        <p>Esta sección es privada: acá ves el historial de tus compras en Nova Tech.</p>
+        <a href="login.html" class="btn btn-primary btn-block">Iniciar sesión</a>
+      </div>
+    </section>
+
+    <!-- Panel privado: se muestra solo con sesión activa -->
+    <section aria-labelledby="heading-cuenta" id="cuenta-panel" class="oculto">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Mi cuenta</span>
+          <h1 id="heading-cuenta">Hola, <span id="cuenta-nombre"></span></h1>
+          <p class="form-note" id="cuenta-email"></p>
+        </div>
+        <a href="comprar.html" class="btn btn-primary">Nueva compra</a>
+      </div>
+
+      <h2>Mis compras</h2>
+
+      <div class="table-wrap">
+        <table class="catalog compras">
+          <thead>
+            <tr>
+              <th>Comprobante</th>
+              <th>Fecha</th>
+              <th>Productos</th>
+              <th>Medio de pago</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <!-- Las filas se crean en app.js con createElement + textContent -->
+          <tbody id="tabla-compras"></tbody>
+        </table>
+      </div>
+
+      <p id="sin-compras" class="form-note oculto">
+        Todavía no hiciste ninguna compra. <a href="listado_box.html">Mirá el catálogo</a>.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Pie de pagina -->
+  <footer class="site-footer">
+    <span class="accent">NOVA TECH</span> · Accesorios tecnológicos para tu día a día
+  </footer>
+
+  <!-- JS del sitio (Entrega 3): consulta api/mis_compras.php y arma la tabla con textContent (ver app.js) -->
+  <script src="app.js" defer></script>
+
+</body>
+</html>

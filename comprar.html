@@ -26,7 +26,10 @@
           <input type="text" placeholder="Buscar auriculares, teclados, cargadores...">
         </div>
         <div class="header-actions">
-          <a href="login.html" class="header-action">👤 Iniciar sesión</a>
+          <!-- Se alternan desde app.js según la sesión (api/mis_compras.php) -->
+          <a href="login.html" class="header-action" id="header-login">👤 Iniciar sesión</a>
+          <a href="mi_cuenta.html" class="header-action oculto" id="header-usuario">👤 <span id="header-nombre"></span></a>
+          <button type="button" class="header-action btn-salir oculto" id="btn-logout">Salir</button>
           <a href="comprar.html" class="header-action cart">🛒 Carrito</a>
         </div>
       </div>
@@ -68,7 +71,7 @@
           <div class="form-grid">
             <div class="form-field">
               <label for="nombre">Nombre del cliente</label>
-              <input type="text" id="nombre" name="nombre_cliente" value="Juana Pérez">
+              <input type="text" id="nombre" name="nombre_cliente" placeholder="Se completa al iniciar sesión">
             </div>
 
             <div class="form-field">
@@ -83,7 +86,7 @@
 
             <div class="form-field full">
               <label for="email">Email</label>
-              <input type="email" id="email" name="email" value="juana.perez@email.com">
+              <input type="email" id="email" name="email" placeholder="Se completa al iniciar sesión">
             </div>
 
             <div class="form-field full">
@@ -100,7 +103,7 @@
           </div>
 
           <p class="form-note">
-            Estos datos vienen precargados como ejemplo (simulan que ya iniciaste sesión). Podés editarlos antes de confirmar.
+            El nombre y el email se completan solos con los datos de tu sesión. Teléfono y dirección son de ejemplo, podés editarlos.
           </p>
         </fieldset>
 
@@ -109,49 +112,49 @@
 
           <div class="order-line">
             <span class="item-name">Auriculares Bluetooth NovaSound X1</span>
-            <input type="number" min="0" value="1" aria-label="Cantidad NovaSound X1" name="cantidad_novasound_x1">
+            <input type="number" min="0" value="1" aria-label="Cantidad NovaSound X1" name="cantidad_novasound_x1" data-producto="novasound-x1">
             <span class="item-price mono">$ 45.999</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Cargador Rápido GaN NovaCharge 65W</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaCharge 65W" name="cantidad_novacharge_65w">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaCharge 65W" name="cantidad_novacharge_65w" data-producto="novacharge-65w">
             <span class="item-price mono">$ 18.500</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Teclado Mecánico NovaKey RGB</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaKey RGB" name="cantidad_novakey_rgb">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaKey RGB" name="cantidad_novakey_rgb" data-producto="novakey-rgb">
             <span class="item-price mono">$ 52.000</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Mouse Inalámbrico NovaClick Pro</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaClick Pro" name="cantidad_novaclick_pro">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaClick Pro" name="cantidad_novaclick_pro" data-producto="novaclick-pro">
             <span class="item-price mono">$ 22.300</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Parlante Portátil NovaBoom Mini</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaBoom Mini" name="cantidad_novaboom_mini">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaBoom Mini" name="cantidad_novaboom_mini" data-producto="novaboom-mini">
             <span class="item-price mono">$ 31.200</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Power Bank NovaCharge 20000mAh</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaCharge 20000mAh" name="cantidad_novacharge_20k">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaCharge 20000mAh" name="cantidad_novacharge_20k" data-producto="novacharge-20k">
             <span class="item-price mono">$ 27.800</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Auriculares In-Ear NovaBuds Air</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaBuds Air" name="cantidad_novabuds_air">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaBuds Air" name="cantidad_novabuds_air" data-producto="novabuds-air">
             <span class="item-price mono">$ 28.900</span>
           </div>
 
           <div class="order-line">
             <span class="item-name">Hub USB-C NovaHub 7-en-1</span>
-            <input type="number" min="0" value="0" aria-label="Cantidad NovaHub 7-en-1" name="cantidad_novahub_7">
+            <input type="number" min="0" value="0" aria-label="Cantidad NovaHub 7-en-1" name="cantidad_novahub_7" data-producto="novahub-7">
             <span class="item-price mono">$ 19.900</span>
           </div>
 
@@ -178,7 +181,11 @@
           <span class="value">$ 45.999</span>
         </div>
 
-        <a href="#confirmar-pedido" class="btn btn-primary btn-block" style="margin-top:20px;">Finalizar pedido</a>
+        <!-- Sin sesión se muestra el aviso y se oculta el botón (lo maneja app.js) -->
+        <div id="aviso-login" class="form-feedback pendiente oculto" style="margin-top:20px;">
+          Para finalizar el pedido tenés que <a href="login.html">iniciar sesión</a>.
+        </div>
+        <a href="#confirmar-pedido" id="btn-finalizar" class="btn btn-primary btn-block oculto" style="margin-top:20px;">Finalizar pedido</a>
         <p class="form-note" style="text-align:center; margin-top:10px;">
           Maquetado estático: este resumen no se recalcula automáticamente.
         </p>
@@ -213,12 +220,14 @@
       </table>
 
       <p class="form-note">
-        Este resumen es un ejemplo fijo de maquetado: no representa un cálculo real sobre las cantidades cargadas.
+        Este resumen es un ejemplo fijo de maquetado. El total real lo calcula el servidor al confirmar y aparece en el comprobante.
       </p>
+
+      <div id="compra-feedback" class="form-feedback" aria-live="polite"></div>
 
       <div class="modal-actions">
         <a href="#" class="btn btn-outline">Cancelar</a>
-        <a href="#pedido-confirmado" class="btn btn-primary">Confirmar</a>
+        <a href="#pedido-confirmado" id="btn-confirmar" class="btn btn-primary">Confirmar</a>
       </div>
     </div>
   </div>
@@ -233,15 +242,15 @@
         <div class="ticket-header">
           <span class="brand-mark">N</span>
           <div><strong>NOVA TECH</strong></div>
-          <div class="ticket-meta">Comprobante N.° 0001045</div>
-          <div class="ticket-meta">Fecha: 04/09/2026</div>
+          <div class="ticket-meta" id="ticket-numero">Comprobante N.° 0001045</div>
+          <div class="ticket-meta" id="ticket-fecha">Fecha: 04/09/2026</div>
         </div>
 
-        <p class="ticket-meta">Cliente: Juana Pérez</p>
-        <p class="ticket-meta">Medio de pago: Tarjeta de crédito</p>
+        <p class="ticket-meta" id="ticket-cliente">Cliente: Juana Pérez</p>
+        <p class="ticket-meta" id="ticket-pago">Medio de pago: Tarjeta de crédito</p>
 
         <table class="modal-summary">
-          <tbody>
+          <tbody id="ticket-detalle">
             <tr>
               <td>Auriculares Bluetooth NovaSound X1</td>
               <td class="qty">x1</td>
@@ -292,7 +301,7 @@
     <span class="accent">NOVA TECH</span> · Accesorios tecnológicos para tu día a día
   </footer>
 
-  <!-- JS del sitio (Entrega 2): buscador del header (ver app.js) -->
+  <!-- JS del sitio (Entrega 3): sesión + registro de la compra en api/mis_compras.php (ver app.js) -->
   <script src="app.js" defer></script>
 
 </body>

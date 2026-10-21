@@ -26,7 +26,6 @@
           <input type="text" placeholder="Buscar auriculares, teclados, cargadores...">
         </div>
         <div class="header-actions">
-          <!-- Se alternan desde app.js según la sesión (api/mis_compras.php) -->
           <a href="login.html" class="header-action" id="header-login">👤 Iniciar sesión</a>
           <a href="mi_cuenta.html" class="header-action oculto" id="header-usuario">👤 <span id="header-nombre"></span></a>
           <button type="button" class="header-action btn-salir oculto" id="btn-logout">Salir</button>
@@ -64,7 +63,7 @@
           Ingresá tus datos para continuar.
         </p>
 
-        <!-- Login: POST a api/login.php (password_verify + session_start en PHP) -->
+        <!-- Login: POST a api/login.php -->
         <form id="loginForm">
           <div class="form-field full">
             <label for="login_email">Email</label>
@@ -88,7 +87,6 @@
       </div>
     </section>
 
-    <!-- Se muestra en lugar de los formularios cuando ya hay una sesión abierta -->
     <section aria-label="Sesión activa" id="sesion-activa" class="oculto">
       <div class="form-shell login-shell">
         <span class="eyebrow">Sesión activa</span>
@@ -109,7 +107,7 @@
           Registrate en Nova Tech con tu email y una contraseña para poder comprar.
         </p>
 
-        <!-- Registro: POST a api/registro.php (hash BCRYPT). Se sigue validando confirmacion y longitud en el front -->
+        <!-- Registro: POST a api/registro.php -->
         <form id="registroForm">
           <div class="form-field full">
             <label for="registro_nombre">Nombre y apellido</label>
@@ -149,7 +147,7 @@
     <span class="accent">NOVA TECH</span> · Accesorios tecnológicos para tu día a día
   </footer>
 
-  <!-- JS del sitio (Entrega 3): login/registro contra la API PHP con sesiones y buscador del header (ver app.js) -->
+  <!-- JS del sitio (Actividad 23): login/registro contra la API PHP con sesiones y buscador del header (ver app.js) -->
   <script src="app.js" defer></script>
 
 </body>

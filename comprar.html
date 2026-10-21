@@ -26,7 +26,6 @@
           <input type="text" placeholder="Buscar auriculares, teclados, cargadores...">
         </div>
         <div class="header-actions">
-          <!-- Se alternan desde app.js según la sesión (api/mis_compras.php) -->
           <a href="login.html" class="header-action" id="header-login">👤 Iniciar sesión</a>
           <a href="mi_cuenta.html" class="header-action oculto" id="header-usuario">👤 <span id="header-nombre"></span></a>
           <button type="button" class="header-action btn-salir oculto" id="btn-logout">Salir</button>
@@ -181,7 +180,6 @@
           <span class="value">$ 45.999</span>
         </div>
 
-        <!-- Sin sesión se muestra el aviso y se oculta el botón (lo maneja app.js) -->
         <div id="aviso-login" class="form-feedback pendiente oculto" style="margin-top:20px;">
           Para finalizar el pedido tenés que <a href="login.html">iniciar sesión</a>.
         </div>
@@ -301,7 +299,7 @@
     <span class="accent">NOVA TECH</span> · Accesorios tecnológicos para tu día a día
   </footer>
 
-  <!-- JS del sitio (Entrega 3): sesión + registro de la compra en api/mis_compras.php (ver app.js) -->
+  <!-- JS del sitio (Actividad 23): sesión + registro de la compra en api/mis_compras.php (ver app.js) -->
   <script src="app.js" defer></script>
 
 </body>

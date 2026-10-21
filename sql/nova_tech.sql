@@ -1,7 +1,4 @@
--- =========================================================
--- Nova Tech - Entrega 3: base de datos para login con sesiones
--- Importar desde phpMyAdmin (pestaña "Importar") o pegar en "SQL".
--- =========================================================
+-- Nova Tech - Actividad 23
 
 CREATE DATABASE IF NOT EXISTS nova_tech
   CHARACTER SET utf8mb4
@@ -9,12 +6,8 @@ CREATE DATABASE IF NOT EXISTS nova_tech
 
 USE nova_tech;
 
--- ---------------------------------------------------------
 -- Clientes de la tienda
--- password es VARCHAR(255) porque guardamos el hash BCRYPT
--- (hoy ocupa 60 caracteres, pero PHP recomienda dejar 255
--- por si en el futuro cambia el algoritmo).
--- ---------------------------------------------------------
+-- password VARCHAR(255) para el hash BCRYPT
 CREATE TABLE IF NOT EXISTS usuarios (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   nombre     VARCHAR(100) NOT NULL,
@@ -24,9 +17,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   creado_en  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------
--- Productos (mismo id/slug que usamos en data/productos.json)
--- ---------------------------------------------------------
+-- Productos (mismo id que en data/productos.json)
 CREATE TABLE IF NOT EXISTS productos (
   id      VARCHAR(40) PRIMARY KEY,
   nombre  VARCHAR(150) NOT NULL,
@@ -34,9 +25,7 @@ CREATE TABLE IF NOT EXISTS productos (
   stock   INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------
--- Compras: cabecera (una por pedido) y detalle (una por producto)
--- ---------------------------------------------------------
+-- Compras y su detalle
 CREATE TABLE IF NOT EXISTS compras (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   usuario_id  INT NOT NULL,
@@ -59,9 +48,7 @@ CREATE TABLE IF NOT EXISTS compra_detalle (
     REFERENCES productos(id)
 ) ENGINE=InnoDB;
 
--- ---------------------------------------------------------
 -- Datos de prueba
--- ---------------------------------------------------------
 INSERT IGNORE INTO productos (id, nombre, precio, stock) VALUES
   ('novasound-x1',   'Auriculares Bluetooth NovaSound X1',   45999.00, 25),
   ('novacharge-65w', 'Cargador Rápido GaN NovaCharge 65W',   18500.00, 40),
@@ -72,12 +59,11 @@ INSERT IGNORE INTO productos (id, nombre, precio, stock) VALUES
   ('novabuds-air',   'Auriculares In-Ear NovaBuds Air',      28900.00, 35),
   ('novahub-7',      'Hub USB-C NovaHub 7-en-1',             19900.00, 12);
 
--- Usuario demo -> email: demo@novatech.com / contraseña: demo1234
--- (el hash lo generamos con password_hash('demo1234', PASSWORD_BCRYPT))
+-- usuario demo (demo@novatech.com)
 INSERT IGNORE INTO usuarios (id, nombre, email, password) VALUES
   (1, 'Usuario Demo', 'demo@novatech.com', '$2y$10$0FsStC2rRM/0g43oIlYeEeqslI9XW7Rdw3BtpPfk2ngtAHTnS0Hfm');
 
--- Una compra de ejemplo para que "Mi cuenta" no arranque vacía
+-- compra de ejemplo
 INSERT IGNORE INTO compras (id, usuario_id, fecha, medio_pago, total) VALUES
   (1, 1, '2026-09-04 18:30:00', 'tarjeta_credito', 45999.00);
 

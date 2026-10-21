@@ -1,10 +1,5 @@
-// Opción 4 — Módulo de Registro y Autenticación de Usuarios.
-// Entrega 3: ya no se valida contra data/usuarios.json, ahora todo pasa por la API PHP
-// (api/registro.php, api/login.php, api/logout.php) y la sesión la guarda el servidor.
+// Opción 4 — Módulo de Registro y Autenticación de Usuarios (Actividad 23: API PHP + sesiones).
 // Desacoplado: sin onclick/onsubmit en el HTML, todo se conecta acá vía addEventListener.
-//
-// Regla contra XSS: cualquier dato que venga del usuario o de la base (nombre, email,
-// productos de una compra) se pinta SIEMPRE con .textContent, nunca con innerHTML.
 
 const LONGITUD_MINIMA_CLAVE = 8;
 
@@ -33,9 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   verificarSesion();
 });
 
-// ===== Estado de sesión =====
-// Al cargar cualquier página le preguntamos al endpoint privado si hay sesión.
-// 200 -> hay usuario logueado | 401 -> visitante sin sesión.
+// 200 = hay sesion, 401 = no
 async function verificarSesion() {
   try {
     const respuesta = await fetch('api/mis_compras.php');
@@ -51,35 +44,29 @@ async function verificarSesion() {
     const datos = await respuesta.json();
     aplicarVistaConSesion(datos.usuario, datos.compras);
   } catch (error) {
-    // Si la API no responde (por ej. abriendo el HTML sin XAMPP) lo tratamos como sin sesión
     aplicarVistaSinSesion();
   }
 }
 
 function aplicarVistaConSesion(usuario, compras) {
-  // Header (todas las páginas)
   ocultar('#header-login');
   mostrar('#header-usuario');
   mostrar('#btn-logout');
   ponerTexto('#header-nombre', usuario.nombre);
 
-  // login.html: ya está logueado, no tiene sentido mostrarle los formularios
   if (document.querySelector('#sesion-activa')) {
     document.querySelectorAll('.login-view, .registro-view').forEach((seccion) => seccion.classList.add('oculto'));
     mostrar('#sesion-activa');
     ponerTexto('#sesion-nombre', usuario.nombre);
   }
 
-  // comprar.html: habilitamos el botón y completamos los datos del cliente
   if (document.querySelector('#btn-finalizar')) {
     mostrar('#btn-finalizar');
     ocultar('#aviso-login');
-    // .value tampoco interpreta HTML, así que es seguro igual que textContent
     document.querySelector('#nombre').value = usuario.nombre;
     document.querySelector('#email').value = usuario.email;
   }
 
-  // mi_cuenta.html: panel privado con el historial
   if (document.querySelector('#cuenta-panel')) {
     ocultar('#cuenta-sin-sesion');
     mostrar('#cuenta-panel');
@@ -113,7 +100,6 @@ async function cerrarSesion() {
   }
 }
 
-// ===== Login =====
 async function manejarEnvioLogin(evento) {
   evento.preventDefault();
 
@@ -132,7 +118,6 @@ async function manejarEnvioLogin(evento) {
     const resultado = await respuesta.json();
 
     if (respuesta.ok && resultado.estado === 'exito') {
-      // mostrarFeedback usa textContent, así que el nombre no se interpreta como HTML
       mostrarFeedback(feedback, `¡Bienvenida/o, ${resultado.usuario.nombre}! Redirigiendo a la compra...`, 'exito');
       setTimeout(() => {
         window.location.href = 'comprar.html';
@@ -145,7 +130,6 @@ async function manejarEnvioLogin(evento) {
   }
 }
 
-// ===== Registro =====
 async function manejarEnvioRegistro(evento) {
   evento.preventDefault();
 
@@ -181,7 +165,6 @@ async function manejarEnvioRegistro(evento) {
         window.location.href = 'login.html';
       }, 1200);
     } else {
-      // 409 si el email ya existe, 400 si falta algún dato
       mostrarFeedback(feedback, resultado.mensaje || 'No se pudo crear la cuenta.', 'error');
     }
   } catch (error) {
@@ -189,7 +172,6 @@ async function manejarEnvioRegistro(evento) {
   }
 }
 
-// ===== Mis compras (mi_cuenta.html) =====
 function renderizarCompras(compras) {
   const cuerpo = document.querySelector('#tabla-compras');
   cuerpo.replaceChildren();
@@ -212,7 +194,6 @@ function renderizarCompras(compras) {
   });
 }
 
-// ===== Confirmar compra (comprar.html) =====
 async function confirmarCompra(evento) {
   evento.preventDefault();
   const feedback = document.querySelector('#compra-feedback');
@@ -235,7 +216,6 @@ async function confirmarCompra(evento) {
     });
 
     if (respuesta.status === 401) {
-      // Se le venció la sesión (o nunca la tuvo): lo mandamos a loguearse
       window.location.href = 'login.html';
       return;
     }
@@ -285,7 +265,6 @@ function completarTicket(compra) {
   cuerpo.append(filaEnvio, filaTotal);
 }
 
-// ===== Helpers =====
 function crearCelda(texto, clase) {
   const celda = document.createElement('td');
   celda.textContent = texto;
@@ -317,7 +296,6 @@ function formatearPrecio(valor) {
 }
 
 function formatearFecha(fechaMysql) {
-  // "2026-09-04 18:30:00" -> "04/09/2026"
   const [anio, mes, dia] = fechaMysql.slice(0, 10).split('-');
   return `${dia}/${mes}/${anio}`;
 }
@@ -337,7 +315,7 @@ async function inicializarBuscador() {
   if (!input) return;
 
   const grilla = document.querySelector('.product-grid');
-  // La tabla de mi_cuenta.html también usa .catalog (por el estilo), pero no es el catálogo
+  // excluimos la tabla de mi_cuenta.html
   const cuerpoTabla = document.querySelector('table.catalog:not(.compras) tbody');
   const hayCatalogoEnEstaPagina = grilla || cuerpoTabla;
 
@@ -376,9 +354,15 @@ async function obtenerProductos() {
 }
 
 function mostrarErrorCatalogo(grilla, cuerpoTabla) {
-  const mensaje = '<p class="form-feedback error">No se pudo cargar el catálogo. Intentá recargar la página.</p>';
-  if (grilla) grilla.innerHTML = mensaje;
-  if (cuerpoTabla) cuerpoTabla.innerHTML = `<tr><td colspan="4">${mensaje}</td></tr>`;
+  const texto = 'No se pudo cargar el catálogo. Intentá recargar la página.';
+  if (grilla) grilla.replaceChildren(crearElemento('p', 'form-feedback error', texto));
+  if (cuerpoTabla) {
+    const celda = crearElemento('td', '', texto);
+    celda.colSpan = 4;
+    const fila = document.createElement('tr');
+    fila.append(celda);
+    cuerpoTabla.replaceChildren(fila);
+  }
 }
 
 function filtrarYRenderizar(termino, grilla, cuerpoTabla) {
@@ -390,40 +374,63 @@ function filtrarYRenderizar(termino, grilla, cuerpoTabla) {
 }
 
 function renderizarCatalogo(productos, grilla, cuerpoTabla) {
-  if (grilla) grilla.innerHTML = productos.map(tarjetaHTML).join('');
-  if (cuerpoTabla) cuerpoTabla.innerHTML = productos.map(filaHTML).join('');
+  if (grilla) grilla.replaceChildren(...productos.map(crearTarjeta));
+  if (cuerpoTabla) cuerpoTabla.replaceChildren(...productos.map(crearFila));
 }
 
-function tarjetaHTML(producto) {
-  const botonDetalle = producto.detalle
-    ? '<a href="producto.html" class="btn btn-outline">Ver detalle</a>'
-    : '';
-  const botonAgregar = producto.detalle
-    ? '<a href="comprar.html" class="btn btn-primary">Agregar</a>'
-    : '<a href="comprar.html" class="btn btn-primary btn-block">Agregar al carrito</a>';
+function crearTarjeta(producto) {
+  const tarjeta = crearElemento('article', `product-card cat-${producto.categoriaSlug}`);
 
-  return `
-    <article class="product-card cat-${producto.categoriaSlug}">
-      <img src="${producto.imagen}" alt="${producto.nombre}">
-      <div class="body">
-        <div class="category">${producto.categoria}</div>
-        <h2>${producto.nombre}</h2>
-        <div class="price small">${producto.precioTexto}</div>
-        <div class="stock">Stock: ${producto.stock} unidades</div>
-        <div class="card-actions">${botonDetalle}${botonAgregar}</div>
-      </div>
-    </article>
-  `;
+  const imagen = document.createElement('img');
+  imagen.src = producto.imagen;
+  imagen.alt = producto.nombre;
+
+  const acciones = crearElemento('div', 'card-actions');
+  if (producto.detalle) {
+    acciones.append(
+      crearEnlace('producto.html', 'btn btn-outline', 'Ver detalle'),
+      crearEnlace('comprar.html', 'btn btn-primary', 'Agregar')
+    );
+  } else {
+    acciones.append(crearEnlace('comprar.html', 'btn btn-primary btn-block', 'Agregar al carrito'));
+  }
+
+  const cuerpo = crearElemento('div', 'body');
+  cuerpo.append(
+    crearElemento('div', 'category', producto.categoria),
+    crearElemento('h2', '', producto.nombre),
+    crearElemento('div', 'price small', producto.precioTexto),
+    crearElemento('div', 'stock', `Stock: ${producto.stock} unidades`),
+    acciones
+  );
+
+  tarjeta.append(imagen, cuerpo);
+  return tarjeta;
 }
 
-function filaHTML(producto) {
-  const clasePill = producto.stockBajo ? 'stock-pill low' : 'stock-pill';
-  return `
-    <tr class="cat-row cat-${producto.categoriaSlug}">
-      <td class="name">${producto.nombre}</td>
-      <td>${producto.categoria}</td>
-      <td class="price">${producto.precioTexto}</td>
-      <td><span class="${clasePill}">${producto.stock} unidades</span></td>
-    </tr>
-  `;
+function crearFila(producto) {
+  const fila = crearElemento('tr', `cat-row cat-${producto.categoriaSlug}`);
+  const stock = document.createElement('td');
+  stock.append(crearElemento('span', producto.stockBajo ? 'stock-pill low' : 'stock-pill', `${producto.stock} unidades`));
+
+  fila.append(
+    crearElemento('td', 'name', producto.nombre),
+    crearElemento('td', '', producto.categoria),
+    crearElemento('td', 'price', producto.precioTexto),
+    stock
+  );
+  return fila;
+}
+
+function crearElemento(etiqueta, clase, texto) {
+  const elemento = document.createElement(etiqueta);
+  if (clase) elemento.className = clase;
+  if (texto !== undefined) elemento.textContent = texto;
+  return elemento;
+}
+
+function crearEnlace(href, clase, texto) {
+  const enlace = crearElemento('a', clase, texto);
+  enlace.href = href;
+  return enlace;
 }

@@ -1,8 +1,8 @@
 <?php
+session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
-// Vaciamos los datos de la sesión
 $_SESSION = [];
 
 // Borramos también la cookie PHPSESSID del navegador

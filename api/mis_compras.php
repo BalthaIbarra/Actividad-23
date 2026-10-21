@@ -1,9 +1,9 @@
 <?php
+session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
-// ===== Guardián de sesión =====
-// Si no hay usuario logueado cortamos acá con 401 y no se toca la base.
+// guardián de sesión
 if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401); // Unauthorized
     echo json_encode(["estado" => "error", "mensaje" => "Acceso no autorizado. Iniciá sesión."], JSON_UNESCAPED_UNICODE);
@@ -12,8 +12,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 require_once '../config/conexion.php';
 
-// El id SIEMPRE sale de la sesión, nunca del front,
-// así nadie puede pedir las compras de otro usuario.
+// el id sale de la sesión, no del front
 $usuarioId = $_SESSION['usuario_id'];
 
 $usuario = [
@@ -21,7 +20,7 @@ $usuario = [
     "email"  => $_SESSION['usuario_email']
 ];
 
-// ===== GET: listado de compras del usuario logueado =====
+// GET: compras del usuario
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         $sql = "SELECT c.id, c.fecha, c.medio_pago, c.total,
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-// ===== POST: registrar una compra nueva (desde comprar.html) =====
+// POST: nueva compra desde comprar.html
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input     = json_decode(file_get_contents('php://input'), true);
     $medioPago = $input['medio_pago'] ?? '';
@@ -61,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Nos quedamos solo con los productos que tengan cantidad > 0
     $pedido = [];
     foreach ((array) $items as $item) {
         $productoId = $item['producto_id'] ?? '';
@@ -80,8 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo->beginTransaction();
 
-        // Los precios los sacamos de la base y no del front
-        // (si no, cualquiera podría mandarse un auricular a $1).
+        // precios desde la base, no del front
         $stmtProducto = $pdo->prepare('SELECT id, nombre, precio, stock FROM productos WHERE id = :id FOR UPDATE');
         $detalle = [];
         $total   = 0;

@@ -1343,14 +1343,12 @@ fieldset legend {
   }
 }
 
-/* ===== Entrega 3: sesión de usuario ===== */
+/* Actividad 23 - sesion */
 
-/* Clase que usa app.js para mostrar/ocultar según haya sesión o no */
 .oculto {
   display: none !important;
 }
 
-/* El "Salir" del header es un <button>, le sacamos el estilo por defecto */
 .btn-salir {
   background: transparent;
   font-family: inherit;

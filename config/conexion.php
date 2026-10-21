@@ -1,6 +1,5 @@
 <?php
-// Conexión PDO a MySQL (XAMPP por defecto: usuario root sin contraseña).
-// Si en tu máquina tenés otra contraseña, cambiala acá.
+// XAMPP por defecto: root sin contraseña
 $host    = 'localhost';
 $db      = 'nova_tech';
 $user    = 'root';
@@ -11,7 +10,7 @@ $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES   => false, // prepared statements reales del lado de MySQL
+    PDO::ATTR_EMULATE_PREPARES   => false,
 ];
 
 try {

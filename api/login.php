@@ -23,10 +23,9 @@ try {
     $stmt->execute(['email' => $email]);
     $usuario = $stmt->fetch();
 
-    // password_verify compara la clave escrita contra el hash guardado.
-    // Si el email no existe o la clave no coincide damos el mismo mensaje,
-    // así no se puede averiguar qué emails están registrados.
+    // mismo mensaje si falla el email o la clave
     if ($usuario && password_verify($password, $usuario['password'])) {
+        session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
         session_start();
         // Regeneramos el id de sesión para evitar session fixation
         session_regenerate_id(true);

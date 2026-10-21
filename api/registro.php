@@ -8,12 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// El front manda los datos como JSON, así que leemos el body crudo
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Nota: el nombre lo guardamos tal cual lo escribió el usuario.
-// La protección contra XSS la hacemos al mostrarlo (textContent en app.js),
-// si lo escapáramos acá con htmlspecialchars se vería "&amp;" en pantalla.
+// no usamos htmlspecialchars: se escapa al mostrar con textContent
 $nombre   = trim($input['nombre'] ?? '');
 $email    = trim($input['email'] ?? '');
 $password = $input['password'] ?? '';
@@ -30,8 +27,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-// Misma regla que en el front (LONGITUD_MINIMA_CLAVE), pero validada también acá
-// porque el front se puede saltear mandando el fetch a mano.
+// misma validacion que en el front
 if (strlen($password) < 8) {
     http_response_code(400);
     echo json_encode(["estado" => "error", "mensaje" => "La contraseña debe tener al menos 8 caracteres."], JSON_UNESCAPED_UNICODE);
@@ -44,7 +40,7 @@ if (mb_strlen($nombre) > 100) {
     exit;
 }
 
-// Hash BCRYPT: nunca guardamos la contraseña en texto plano
+// hash BCRYPT
 $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
 try {
@@ -61,7 +57,7 @@ try {
 
 } catch (PDOException $e) {
     if ($e->getCode() == 23000) {
-        // 23000 = violación de UNIQUE (el email ya está registrado)
+        // email duplicado
         http_response_code(409);
         echo json_encode(["estado" => "error", "mensaje" => "Ya existe una cuenta registrada con ese email."], JSON_UNESCAPED_UNICODE);
     } else {
